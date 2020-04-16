@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- <meta name="csrf-token" content="{{ csrf_token() }}"> -->
-
 <div class="container">
     <h2>Prices</h2>
     <div>
@@ -13,6 +11,7 @@
         <button id="pricebtn" class="btn btn-primary">Get Price</button>
     </div>
     <div style="margin-top:10px;" id="price_messages"></div>
+    <!-- show saved success message -->
     @if (session('price_saved'))
         <div style="margin-top:10px;" class="alert alert-success">
             {{ session('price_saved') }}
@@ -47,6 +46,7 @@
             <button type="submit" style="margin-top:10px;" class="btn btn-primary">Save</button>
         </form>
     </div>
+    <!-- Show posible errors on request values -->
     @if ($errors->any())
         <div style="margin-top:10px;" class="alert alert-danger">
             <ul>
@@ -88,6 +88,7 @@
         </table>
     </div>
     <a href="{{ url('/destroyPrices') }}"><button id="dataClean" class="btn btn-danger">Reset table</button> </a>
+    <!-- Show sucess message of reset table -->
     @if (session('table_destroyed'))
         <div style="margin-top:10px;" class="alert alert-success">
             {{ session('table_destroyed') }}
@@ -111,24 +112,28 @@
                         if(response.hasOwnProperty("Global Quote"))
                         {
                             var pricesObj = response["Global Quote"];
-                            // $.ajaxSetup({
-                            //     headers: {
-                            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            //     }
-                            // });
-                            // $.ajax({
-                            //     url: "{{ route('prices.store') }}",
-                            //     type: 'POST',
-                            //     data: {
-                            //         symbol: pricesObj["01. symbol"],
-                            //         high: pricesObj["03. high"],
-                            //         low: pricesObj["04. low"],
-                            //         price: pricesObj["05. price"]
-                            //     },
-                            //     success:function(response) {
-                            //         $('#saveResult').html("<div style='margin-top:10px; width:50%;' class='alert alert-success'>" + response + "</div>").fadeIn("slow").delay("3000").fadeOut("3000");
-                            //     }
-                            // });
+                            /*
+                            //Code for ajax storing
+                            $.ajaxSetup({
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                }
+                            });
+                            $.ajax({
+                                url: "{{ route('prices.store') }}",
+                                type: 'POST',
+                                data: {
+                                    symbol: pricesObj["01. symbol"],
+                                    high: pricesObj["03. high"],
+                                    low: pricesObj["04. low"],
+                                    price: pricesObj["05. price"]
+                                },
+                                success:function(response) {
+                                    $('#saveResult').html("<div style='margin-top:10px; width:50%;' class='alert alert-success'>" + response + "</div>").fadeIn("slow").delay("3000").fadeOut("3000");
+                                }
+                            });
+                            */
+                            // show the div of values
                             $("#storeInfo").show();
                             $("#infoSymbol").val(pricesObj["01. symbol"]);
                             $("#infoHigh").val(pricesObj["03. high"]);
@@ -138,27 +143,6 @@
                             $("#storeInfo").hide();
                         }
                     }
-                }
-            });
-        });
-
-        $("#storePrice").click(function(){
-            var stock = $('#infoStock').val();
-            var high = $('#infoHigh').val();
-            var low = $('#infoLow').val();
-            var price = $('#infoPrice').val();
-
-            $.ajax({
-                url: "{{ route('prices.store') }}",
-                type: 'POST',
-                data: {
-                    stock: stock,
-                    high: high,
-                    low: low,
-                    price: price
-                },
-                success:function(response) {
-                    console.log(response);
                 }
             });
         });

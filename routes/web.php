@@ -14,34 +14,22 @@ use App\Price;
 Route::get('/', function () {
     return view('home');
 });
-
-// Route::get('login', function () {
-//     return view('login');
-// });
-
-// Route::get('users', function()
-// {
-//     return View::make('users');
-// });
-
-// Route::get('pricesview', function()
-// {
-//     return view('prices');
-// });
-
-// Route::post('prices.store', 'PricesController@store');
-
 Route::get('login', function () {
     return view('login');
 });
 
+//get link to prices/index
 Route::get('prices.index', 'PriceController@index');
+//Route to reset prices datatable
 Route::get('destroyPrices', function () {
     $prices = Price::all();
     Price::truncate();
     return redirect('/prices.index')->with('table_destroyed', 'Table values deleted');
 });
+//prices controller resource
 Route::resource('prices','PriceController');
+
+//Default routes added by laravel auth system
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
