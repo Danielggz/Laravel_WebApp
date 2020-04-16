@@ -1,60 +1,101 @@
-@extends('prices.layout')
+@extends('layouts.app')
 
 @section('content')
-<meta name="csrf-token" content="{{ csrf_token() }}">
+<!-- <meta name="csrf-token" content="{{ csrf_token() }}"> -->
 
 <div class="container">
     <h2>Prices</h2>
     <div>
-        <div class="form-group">
+        <div style="width:50%;" class="form-group">
             <label for="stock_symbol">Type a stock symbol:</label>
             <input type="text" class="form-control" id="stock_symbol" placeholder="AAPL, AMZN...">
         </div>
         <button id="pricebtn" class="btn btn-primary">Get Price</button>
     </div>
-    <div id="saveResult"></div>
-    <div id="storeInfo" style="margin-top:2em;">
+    <div style="margin-top:10px;" id="price_messages"></div>
+    @if (session('price_saved'))
+        <div style="margin-top:10px;" class="alert alert-success">
+            {{ session('price_saved') }}
+        </div>
+    @endif
+    
+    <div id="storeInfo" style="margin-top:2em; display:none">
         <form action="{{ route('prices.store') }}" method="POST">
         @csrf
-            <div class="form-group">
-                <label for="infoSymbol">Symbol:</label>
-                <input type="text" name="symbol" class="form-control" id="infoSymbol"/>
-                <label for="infoHigh">High:</label>
-                <input type="text" name="high" class="form-control" id="infoHigh"/>
-                <label for="infoLow">Low:</label>
-                <input type="text" name="low" class="form-control" id="infoLow"/>
-                <label for="infoPrice">Price:</label>
-                <input type="text" name="price" class="form-control" id="infoPrice"/>
+            <div style="width:50%;" class="form-group">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="infoSymbol">Symbol:</label>
+                        <input type="text" name="symbol" class="form-control" id="infoSymbol" required/>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="infoHigh">High:</label>
+                        <input type="text" name="high" class="form-control" id="infoHigh"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="infoLow">Low:</label>
+                        <input type="text" name="low" class="form-control" id="infoLow"/>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="infoPrice">Price:</label>
+                        <input type="text" name="price" class="form-control" id="infoPrice" required/>
+                    </div>
+                </div>
             </div>
-            <button type="submit" style="margin-top:1em;" class="btn btn-primary">Save</button>
+            <button type="submit" style="margin-top:10px;" class="btn btn-primary">Save</button>
         </form>
     </div>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-            <td>ID</td>
-            <td>Symbol</td>
-            <td>High</td>
-            <td>Low</td>
-            <td>Price</td>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($prices as $price)
-            <tr>
-                <td>{{$price->id}}</td>
-                <td>{{$price->symbol}}</td>
-                <td>{{$price->high}}</td>
-                <td>{{$price->low}}</td>
-                <td>{{$price->price}}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+    @if ($errors->any())
+        <div style="margin-top:10px;" class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    <div style="margin-top:1em;" id="resultTable">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                <th>ID</th>
+                <th>Symbol</th>
+                <th>High</th>
+                <th>Low</th>
+                <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (count($prices)>0)
+                    @foreach($prices as $price)
+                    <tr>
+                        <td>{{$price->id}}</td>
+                        <td>{{$price->symbol}}</td>
+                        <td>{{$price->high}}</td>
+                        <td>{{$price->low}}</td>
+                        <td>{{$price->price}}</td>
+                    </tr>
+                    @endforeach
+                    @else
+                    <tr>
+                        <td colspan=5><div class="alert alert-info">There are not prices yet</div></td>
+                    </tr>
+                @endif
+               
+            </tbody>
+        </table>
+    </div>
     <a href="{{ url('/destroyPrices') }}"><button id="dataClean" class="btn btn-danger">Reset table</button> </a>
-        
+    @if (session('table_destroyed'))
+        <div style="margin-top:10px;" class="alert alert-success">
+            {{ session('table_destroyed') }}
+        </div>
+    @endif  
 </div>
     <script type="text/javascript">
+    $(document).ready(function(){
         $('#pricebtn').click(function(){
             var apiKey = "0O18XUJW9P8QVGQJ";
             var stockSymbol = $('#stock_symbol').val();
@@ -64,13 +105,12 @@
                 success:function(response){
                     if(response.hasOwnProperty("Error Message"))
                     {
-                        alert("incorrect stock symbol");
+                        $('#price_messages').html("<div class='alert alert-danger'>That stock symbol does not exist</div>").fadeIn().delay(3000).fadeOut();
                         $("#storeInfo").hide();
                     }else{
                         if(response.hasOwnProperty("Global Quote"))
                         {
                             var pricesObj = response["Global Quote"];
-                            console.log(pricesObj);
                             // $.ajaxSetup({
                             //     headers: {
                             //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -122,5 +162,6 @@
                 }
             });
         });
+    });
     </script>
 @endsection

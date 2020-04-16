@@ -48,7 +48,7 @@ class PriceController extends Controller
             'price' => $request->get('price')
         ]);
         $price->save();
-        return redirect('/prices.index')->with('success', 'price saved!');
+        return redirect('/prices.index')->with('price_saved', 'price saved!');
     }
 
     /**

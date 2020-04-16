@@ -31,10 +31,17 @@ Route::get('/', function () {
 
 // Route::post('prices.store', 'PricesController@store');
 
+Route::get('login', function () {
+    return view('login');
+});
+
 Route::get('prices.index', 'PriceController@index');
 Route::get('destroyPrices', function () {
     $prices = Price::all();
     Price::truncate();
-    return redirect('/prices.index')->with('success', 'Table values deleted');
+    return redirect('/prices.index')->with('table_destroyed', 'Table values deleted');
 });
 Route::resource('prices','PriceController');
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
