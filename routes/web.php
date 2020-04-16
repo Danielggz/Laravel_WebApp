@@ -1,5 +1,5 @@
 <?php
-
+use App\Price;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,5 +12,29 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
+
+// Route::get('login', function () {
+//     return view('login');
+// });
+
+// Route::get('users', function()
+// {
+//     return View::make('users');
+// });
+
+// Route::get('pricesview', function()
+// {
+//     return view('prices');
+// });
+
+// Route::post('prices.store', 'PricesController@store');
+
+Route::get('prices.index', 'PriceController@index');
+Route::get('destroyPrices', function () {
+    $prices = Price::all();
+    Price::truncate();
+    return redirect('/prices.index')->with('success', 'Table values deleted');
+});
+Route::resource('prices','PriceController');

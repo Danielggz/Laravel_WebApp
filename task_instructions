@@ -1,0 +1,23 @@
+Create a Laravel Web app which:
+
+	- Allows user to login using Facebook JS API 
+    (https://developers.facebook.com/docs/javascript/examples#login)
+
+	- Once logged in user is shown an input and a 'Get Price' button. 
+    User can enter a stock symbol (i.e. AMZN) into the input and when the button is clicked, 
+    an AJAX call
+
+			- calls an API on the Laravel app which in turn calls Alpha Vantage stock quote API 
+            (https://www.alphavantage.co/documentation/#latestprice). 
+            The API key to use is 0O18XUJW9P8QVGQJ
+				For example 
+                https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=AMZN&apikey=0O18XUJW9P8QVGQJ will return the current information for Amazon (AMZN) stock price.
+
+			- Stores the stock quote symbol, high, low and price in a database table and returns 
+            all the information to the front end for the user to see. 
+            Every quote retrieved is stored in the database.
+
+	- Laravel app should allow the user to re-create the database table 
+    (using Laravels database migrations)
+
+	Upload the Laravel app to Github 
